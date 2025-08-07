@@ -3,7 +3,7 @@
 ;;; A tool shall eliminate planar fragments of lines and polylines (except arc) in the selected graph.
 ;;; Author£ºÀî¾¸¿µ
 ;;; Copyright 2025 Àî¾¸¿µ All rights reserved.
-;;; Version 0.3.36 (2025 Aug. 6th 19:00 UTC/GMT+08:00) published under Apache-2.0 license.
+;;; Version 0.3.36 (2025 Aug. 8th 3:24 UTC/GMT+08:00) published under Apache-2.0 license.
 ;;; This version has been tested on AutoCAD 2018 and 2024 (64 bit) on Windows 10 amd64 Platform over GB18030 encode method.
 ;;; Windows is a brand of Microsoft, AutoCAD is a brand of Autodesk.
 ;;; Contact heimamsn@live.cn if you have suggestions.
