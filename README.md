@@ -1,5 +1,5 @@
 # Brief Introduction
-This is an AutoLisp batch snapping existing straight polylines or lines.Start with command ＂ASNAP" after AutoCAD command "appload" which could load Lisp files.
+This is an AutoLisp batch snapping existing straight polylines or lines.Start with command “ASNAP" after AutoCAD command "appload" which could load Lisp files.
 # Legacy Version
 Legacy version 0.1.0 and 0.2.0 has been archived and out of support,these versions are light-weight.
 # Current Version
