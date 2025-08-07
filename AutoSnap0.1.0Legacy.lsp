@@ -1,9 +1,9 @@
 ;;; Copyright 2025 李靖康 All rights reserved.
 (princ "\n[提示] 已加载 AutoSnap 插件 (版本 0.1.0)\n")
 (princ "Copyright 2025 李靖康 All rights reserved.\n")
-(princ "运行 \"SNAPENDPOINTS\" 命令以开始规整图形\n\n")
+(princ "运行 \"ASNAP\" 命令以开始规整图形\n\n")
 
-(defun c:SnapEndpoints (/ *error* main ss snapDist processedEntities 
+(defun c:ASNAP (/ *error* main ss snapDist processedEntities 
                           round snapPoint processEntity processLine 
                           processPolyline processBlock getBlockTransformMatrix 
                           transformPoint processBlockEntity processTransformedLine 
@@ -340,3 +340,4 @@
   (princ)
 
 )
+
