@@ -3,14 +3,14 @@
 ;;; A tool shall eliminate planar fragments of lines and polylines (except arc) in the selected graph.
 ;;; Author：李靖康
 ;;; Copyright 2025 李靖康 All rights reserved.
-;;; Version 0.3.35 (2025 Aug. 6th 19:00 UTC/GMT+08:00) published under Apache-2.0 license.
+;;; Version 0.3.36 (2025 Aug. 6th 19:00 UTC/GMT+08:00) published under Apache-2.0 license.
 ;;; This version has been tested on AutoCAD 2018 and 2024 (64 bit) on Windows 10 amd64 Platform over GB18030 encode method.
 ;;; Windows is a brand of Microsoft, AutoCAD is a brand of Autodesk.
 ;;; Contact heimamsn@live.cn if you have suggestions.
 ;;; ========================================================================================================================
 
 ;;; 主命令函数
-(defun C:ASNAP (/ *error* acadVer doc ss fuzzDist processedEnts newLayer)
+(defun C:ASNAP (/ *error* doc ss fuzzDist processedEnts newLayer)
   ;; 错误处理函数
   (defun *error* (msg)
     (if (and msg (not (wcmatch (strcase msg) "*BREAK*,*CANCEL*,*QUIT*")))
@@ -19,19 +19,8 @@
     (princ)
   )
   
-  ;; 获取AutoCAD版本和环境设置
-  (setq acadVer (getvar "ACADVER"))
+  ;; 获取文档
   (setq doc (vla-get-ActiveDocument (vlax-get-acad-object)))
-  
-  ;; 设置输出编码（自动适应环境）
-  (cond
-    ((wcmatch acadVer "23.*,24.*") ; AutoCAD 2024+
-      (setenv "LISPENCODING" "UTF-8"))
-    ((wcmatch acadVer "21.*,22.*") ; AutoCAD 2017-2023
-      (setenv "LISPENCODING" "GBK"))
-    (T ; 其他版本默认GBK
-      (setenv "LISPENCODING" "GBK"))
-  )
   
   ;; 创建ASNAP图层
   (setq newLayer (create-asnap-layer doc))
@@ -63,7 +52,7 @@
     (progn
       (setq layer (vla-Add layers "Asnap"))
       (vla-put-Color layer 1) ; 红色
-      (vla-put-Lineweight layer acLnWt030) ; 0.3mm线宽
+      (vla-put-Lineweight layer acLnWt030) ; 0.3mm
     )
     (setq layer (vla-Item layers "Asnap"))
   )
@@ -204,7 +193,7 @@
         (cons 10 (car filteredVerts))
         (cons 11 (cadr filteredVerts))
       ))
-    (T ; 多段线
+    (T
       (append
         (list
           (cons 0 "LWPOLYLINE")
@@ -220,16 +209,15 @@
   )
 )
 
-;;; 处理图块（支持嵌套）- 修复子图块重复处理问题
+;;; 处理图块
 (defun process-block (ent fuzzDist newLayer / blkDef blkName newName newDef entData)
   (setq entData (entget ent))
   (setq blkName (cdr (assoc 2 entData)))
   (setq blkDef (tblobjname "BLOCK" blkName))
   
-  ;; 创建新块定义（若已存在则先删除再重建）
+  ;; 创建新块定义
   (setq newName (strcat blkName "_ASNAP"))
   
-  ;; 关键修复：若新块已存在，先删除旧块定义（包括关联的ENDBLK）
   (if (setq oldBlk (tblobjname "BLOCK" newName))
     (progn
       (entdel oldBlk) ; 删除块定义
@@ -238,7 +226,7 @@
     )
   )
   
-  ;; 处理块内实体（无论是否存在旧块，强制重新处理）
+  ;; 处理块内实体
   (setq newDef (process-block-definition blkDef fuzzDist newLayer newName))
   (if newDef
     (progn
@@ -255,9 +243,8 @@
   )
 )
 
-;;; 处理块定义 - 修复子图块重复处理问题
+;;; 处理块定义
 (defun process-block-definition (blkDef fuzzDist newLayer newName / ent newEnts result)
-  ;; 移除原有的"块已存在则返回"逻辑，强制重新处理
   (setq ent (entnext blkDef))
   (setq newEnts nil)
   (while (and ent (not (= (cdr (assoc 0 (entget ent))) "ENDBLK")))
@@ -268,7 +255,7 @@
   )
   (if newEnts
     (progn
-      ;; 强制创建新块定义（覆盖旧块）
+      ;; 强制创建新块定义
       (entmake (list (cons 0 "BLOCK") (cons 2 newName) (cons 70 0) (cons 10 (list 0.0 0.0 0.0))))
       (foreach entData (reverse newEnts)
         (entmake entData)
@@ -287,7 +274,7 @@
   (list
     (if (zerop fuzzDist) x (* fuzzDist (fix (+ (/ x fuzzDist) 0.5)))) ; X四舍五入
     (if (zerop fuzzDist) y (* fuzzDist (fix (+ (/ y fuzzDist) 0.5)))) ; Y四舍五入
-    0.0 ; Z归零
+    0.0
   )
 )
 
@@ -296,7 +283,7 @@
   (if (not entList)
     (princ "\n没有可绘制的实体!")
     (progn
-      ;; 去除重复实体（通过字符串化判断唯一性）
+      ;; 去除重复实体
       (setq uniqueEnts nil seen (list))
       (foreach entData entList
         (if (and (listp entData) (assoc 0 entData))
@@ -318,7 +305,7 @@
             (append
               entData
               (list
-                (cons 8 "Asnap") ; 放入专用图层
+                (cons 8 "Asnap")
                 (cons 62 256) ; 随层颜色
                 (cons 370 -1) ; 随层线宽
               )
@@ -331,7 +318,7 @@
   )
 )
 
-(princ "\n[提示] AutoSnap 平面正交规整插件（0.3.35版）已被加载。\n")
+(princ "\n[提示] AutoSnap 平面正交规整插件（0.3.36版）已被加载。\n")
 (princ "后续操作可能影响原图，请做好备份，谨慎使用。\n")
 (princ "当前版本已在64位 Windows 10平台上的64位AutoCAD 2018与2024中初步验证，不保证在其他平台和版本上的可用性。\n")
 (princ "版权所有 2025 李靖康，保留所有权利。Windows是微软的注册商标，AutoCAD是欧特克的注册商标。\n")
