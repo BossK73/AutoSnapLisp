@@ -1,17 +1,34 @@
 ;;; ========================================================================================================================
+;;;
+;;; Copyright 2025 李靖康
+;;; 
+;;; Licensed under the Apache License, Version 2.0 (the "License");
+;;; you may not use this file except in compliance with the License.
+;;; You may obtain a copy of the License at
+;;; 
+;;;     http://www.apache.org/licenses/LICENSE-2.0
+;;; 
+;;; Unless required by applicable law or agreed to in writing, software
+;;; distributed under the License is distributed on an "AS IS" BASIS,
+;;; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;;; See the License for the specific language governing permissions and
+;;; limitations under the License.
+;;; 
+;;; ========================================================================================================================
+;;; 
 ;;; AutoSnap plugin for AutoCAD.
 ;;; A tool shall eliminate planar fragments of lines and polylines (except arc) in the selected graph.
 ;;; Author：李靖康
-;;; Copyright 2025 李靖康 All rights reserved.
-;;; Version 0.3.36 (2025 Aug. 8th 3:24 UTC/GMT+08:00) published under Apache-2.0 license.
+;;; Version 0.3.37 (2025 Aug. 9th 12:35 UTC/GMT+08:00)
 ;;; This version has been tested on AutoCAD 2018 and 2024 (64 bit) on Windows 10 amd64 Platform over GB18030 encode method.
 ;;; Windows is a brand of Microsoft, AutoCAD is a brand of Autodesk.
 ;;; Contact heimamsn@live.cn if you have suggestions.
+;;; 
 ;;; ========================================================================================================================
 
-;;; 主命令函数
+;;; 主命令
 (defun C:ASNAP (/ *error* doc ss fuzzDist processedEnts newLayer)
-  ;; 错误处理函数
+  ;; 错误处理
   (defun *error* (msg)
     (if (and msg (not (wcmatch (strcase msg) "*BREAK*,*CANCEL*,*QUIT*")))
       (princ (strcat "\n错误: " msg))
@@ -274,7 +291,7 @@
   (list
     (if (zerop fuzzDist) x (* fuzzDist (fix (+ (/ x fuzzDist) 0.5)))) ; X四舍五入
     (if (zerop fuzzDist) y (* fuzzDist (fix (+ (/ y fuzzDist) 0.5)))) ; Y四舍五入
-    0.0
+    0.0 ; Z坐标归零
   )
 )
 
@@ -318,9 +335,9 @@
   )
 )
 
-(princ "\n[提示] AutoSnap 平面正交规整插件（0.3.36版）已被加载。\n")
-(princ "后续操作可能影响原图，请做好备份，谨慎使用。\n")
-(princ "当前版本已在64位 Windows 10平台上的64位AutoCAD 2018与2024中初步验证，不保证在其他平台和版本上的可用性。\n")
-(princ "版权所有 2025 李靖康，保留所有权利。Windows是微软的注册商标，AutoCAD是欧特克的注册商标。\n")
-(princ "源代码使用Apache-2.0许可，欢迎联系heimamsn@live.cn提出改进意见。\n")
+(princ "\n[提示] AutoSnap 平面正交规整插件（0.3.37版）已被加载。\n")
+(princ "不保证Win10 21H2 x64 AutoCAD 2018/24(64bit)以外的可用性。\n")
+(princ "版权所有 2025 李靖康，源代码使用Apache-2.0协议开源。\n")
+(princ "Windows是微软的注册商标，AutoCAD是欧特克的注册商标。\n")
+(princ "欢迎通过电子邮件联系heimamsn@live.cn以提出改进意见。\n")
 (princ "输入并运行命令 \"ASNAP\" 以开始对（多段）直线取整。\n\n")
