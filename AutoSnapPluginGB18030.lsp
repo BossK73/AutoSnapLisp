@@ -69,7 +69,7 @@
     (progn
       (setq layer (vla-Add layers "Asnap"))
       (vla-put-Color layer 1) ; ºìÉ«
-      (vla-put-Lineweight layer acLnWt030) ; 0.3mm
+      (vla-put-Lineweight layer acLnWt030) ; Ïß¿í0.3mm
     )
     (setq layer (vla-Item layers "Asnap"))
   )
